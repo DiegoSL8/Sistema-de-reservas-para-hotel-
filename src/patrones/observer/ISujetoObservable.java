@@ -1,5 +1,7 @@
 package patrones.observer;
 
-public class ISujetoObservable {
-    
+public interface ISujetoObservable {
+    void agregarObservador(IObservador o);
+    void quitarObservador(IObservador o); //  Se agrego la regla faltante
+    void notificarObservadores(String mensaje);
 }

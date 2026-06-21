@@ -12,13 +12,11 @@ import patrones.observer.ISujetoObservable;
 
 /**
  * Patrón Creacional: Singleton.
- * Actúa como la única fuente de verdad para el inventario y las reservas
- * (RN-03).
+ * Actúa como la única fuente de verdad para el inventario y las reservas (RN-03).
  * Implementa control de concurrencia centralizado (RNF-01).
  */
 public class GestorReservas implements ISujetoObservable {
 
-    // Uso de 'volatile' previene problemas de memoria caché en entornos multi-hilo
     private static volatile GestorReservas instancia;
 
     private List<Habitacion> inventarioHabitaciones;
@@ -30,16 +28,12 @@ public class GestorReservas implements ISujetoObservable {
         this.reservasActivas = new ArrayList<>();
         this.listaObservadores = new ArrayList<>();
 
-        // Inicialización base de datos simulada
-        this.inventarioHabitaciones.add(new Habitacion(101, "101"));
-        this.inventarioHabitaciones.add(new Habitacion(102, "102"));
-        this.inventarioHabitaciones.add(new Habitacion(103, "103"));
+        // CORRECCIÓN INTEGRACIÓN 1: Se ajusta al constructor que solo recibe un int
+        this.inventarioHabitaciones.add(new Habitacion(101));
+        this.inventarioHabitaciones.add(new Habitacion(102));
+        this.inventarioHabitaciones.add(new Habitacion(103));
     }
 
-    /**
-     * Obtiene la instancia única mediante Double-Checked Locking.
-     * Garantiza seguridad matemática (RNF-01) sin bloquear la lectura constante.
-     */
     public static GestorReservas getInstancia() {
         if (instancia == null) {
             synchronized (GestorReservas.class) {
@@ -51,15 +45,18 @@ public class GestorReservas implements ISujetoObservable {
         return instancia;
     }
 
-    /**
-     * Consulta las habitaciones que están "Disponibles" para una fecha determinada.
-     * Retorna una lista según lo especificado en el diagrama de clases del
-     * Singleton.
-     */
+    // CORRECCIÓN INTEGRACIÓN 2: Se agrega el método que necesita el Facade
+    public Habitacion buscarHabitacion(int numero) {
+        for (Habitacion h : inventarioHabitaciones) {
+            if (h.getNumero() == numero) return h;
+        }
+        return null;
+    }
+
     public List<Habitacion> consultarDisponibilidad(LocalDate fecha) {
         // Filtra las habitaciones ocupadas en esa fecha
         List<Habitacion> ocupadas = reservasActivas.stream()
-                .filter(r -> r.getFechaReserva().equals(fecha) && r.getEstado().equals("Confirmada"))
+                .filter(r -> r.getFecha().equals(fecha) && r.getEstado().equals("Confirmada")) // Cambiado getFechaReserva a getFecha
                 .map(Reserva::getHabitacion)
                 .collect(Collectors.toList());
 
@@ -69,37 +66,29 @@ public class GestorReservas implements ISujetoObservable {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Registra una reserva asegurando bloqueo de concurrencia.
-     * 
-     * @param reserva La reserva a procesar.
-     */
     public synchronized void registrarReserva(Reserva reserva) {
         // Se confirma la reserva y se actualiza la habitación a "Ocupada" (RN-01)
-        reserva.confirmarReserva();
-        reserva.getHabitacion().setEstado("Ocupada");
+        reserva.setEstado("Confirmada"); // Cambiado confirmarReserva a setEstado para estandarizar
+        reserva.getHabitacion().setOcupada(true); // Cambiado setEstado("Ocupada") a setOcupada(true)
         reservasActivas.add(reserva);
 
-        // Notificación mediante el patrón Observer (RF-06)
+        // CORRECCIÓN INTEGRACIÓN 3: Cambiado getHuesped a getCliente para coincidir con nuestro modelo
         notificarObservadores("NOTIFICACIÓN: Reserva N°" + reserva.getIdReserva() +
-                " confirmada con éxito para el huésped " + reserva.getHuesped().getNombre() + ".");
+                " confirmada con éxito para el huésped " + reserva.getCliente().getNombre() + ".");
     }
 
-    /**
-     * Modifica el estado de una reserva (Ej: para anularla según RF-05).
-     */
     public synchronized void cambiarEstadoReserva(int idReserva, String nuevoEstado) {
         for (Reserva r : reservasActivas) {
             if (r.getIdReserva() == idReserva) {
                 r.setEstado(nuevoEstado);
 
-                // Si se cancela, se libera la habitación
                 if (nuevoEstado.equalsIgnoreCase("Cancelada") || nuevoEstado.equalsIgnoreCase("Anulada")) {
-                    r.getHabitacion().setEstado("Disponible");
+                    r.getHabitacion().setOcupada(false); 
                 }
 
+                // CORRECCIÓN 3: Agregamos el nombre del cliente al mensaje para que el Observer lo escuche
                 notificarObservadores("SISTEMA: El estado de la reserva N°" + idReserva +
-                        " ha cambiado a " + nuevoEstado.toUpperCase());
+                        " de " + r.getCliente().getNombre() + " ha cambiado a " + nuevoEstado.toUpperCase());
                 break;
             }
         }
@@ -121,7 +110,7 @@ public class GestorReservas implements ISujetoObservable {
     @Override
     public void notificarObservadores(String mensaje) {
         for (IObservador obs : listaObservadores) {
-            obs.actualizar(mensaje); // Delega la impresión/vista al observador (Cliente/Recepción)
+            obs.actualizar(mensaje); 
         }
     }
 }

@@ -6,21 +6,30 @@ package modelo;
  */
 public class Habitacion {
     private int idHabitacion;
-    private String numero;
+    private String numeroString; // Renombrado internamente para evitar confusión
     private String estado; 
 
-    public Habitacion(int idHabitacion, String numero) {
+    // Constructor original (Intacto)
+    public Habitacion(int idHabitacion, String numeroString) {
         this.idHabitacion = idHabitacion;
-        this.numero = numero;
+        this.numeroString = numeroString;
         this.estado = "Disponible"; // Estado por defecto
+    }
+
+    // CORRECCIÓN INTEGRACIÓN 1: Constructor sobrecargado para el GestorReservas
+    public Habitacion(int numero) {
+        this.idHabitacion = numero;
+        this.numeroString = String.valueOf(numero);
+        this.estado = "Disponible";
     }
 
     public int getIdHabitacion() {
         return idHabitacion;
     }
 
-    public String getNumero() {
-        return numero;
+    // CORRECCIÓN INTEGRACIÓN 2: Ahora devuelve un int para que el Gestor pueda buscarla matemáticamente
+    public int getNumero() {
+        return idHabitacion;
     }
 
     /**
@@ -36,7 +45,7 @@ public class Habitacion {
      * @param estado El nuevo estado a asignar.
      */
     public void setEstado(String estado) {
-        // Validación defensiva para asegurar el cumplimiento de RN-01
+        // Validación defensiva de Daniel (Intacta)
         if (estado.equalsIgnoreCase("Disponible") || estado.equalsIgnoreCase("Ocupada")) {
             this.estado = estado;
         } else {
@@ -44,8 +53,25 @@ public class Habitacion {
         }
     }
 
+    // =========================================================================
+    // CORRECCIÓN INTEGRACIÓN 3: "Métodos Puente" para el Facade
+    // Estos métodos traducen los booleanos (true/false) para la validación
+    // =========================================================================
+    
+    public boolean isOcupada() {
+        return this.estado.equalsIgnoreCase("Ocupada");
+    }
+
+    public void setOcupada(boolean ocupada) {
+        if (ocupada) {
+            this.setEstado("Ocupada"); // Llama a la validación
+        } else {
+            this.setEstado("Disponible"); // Llama a la validación
+        }
+    }
+
     @Override
     public String toString() {
-        return "Habitación " + numero + " | Estado: " + estado;
+        return "Habitación " + numeroString + " | Estado: " + estado;
     }
 }

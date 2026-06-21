@@ -7,8 +7,7 @@ public class RegistroHuesped {
     public Cliente registrarCliente(String rut, String nombre) {
         System.out.println("[Subsistema: Registro] Procesando datos del huésped: " + nombre + " (RUT: " + rut + ")");
         
-        // Creamos la instancia del cliente. 
-        // (Cambiar al momento de crear el modelo Cliente).
-        return new Cliente(rut, nombre); 
+        // CORRECCIÓN 1: Invertimos el orden para respetar el constructor (nombre, rut)
+        return new Cliente(nombre, rut); 
     }
 }

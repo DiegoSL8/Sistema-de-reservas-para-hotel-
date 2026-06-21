@@ -7,15 +7,20 @@ import java.time.LocalDate;
  */
 public class Reserva {
     private int idReserva;
-    private LocalDate fechaReserva;
-    private Cliente huesped;
+    
+    // CORRECCIÓN INTEGRACIÓN 1: Renombrado a "fecha" para estandarizar
+    private LocalDate fecha; 
+    
+    // CORRECCIÓN INTEGRACIÓN 2: Renombrado a "cliente" para coincidir con el modelo
+    private Cliente cliente; 
+    
     private Habitacion habitacion;
     private String estado;
 
-    public Reserva(int idReserva, LocalDate fechaReserva, Cliente huesped, Habitacion habitacion) {
+    public Reserva(int idReserva, LocalDate fecha, Cliente cliente, Habitacion habitacion) {
         this.idReserva = idReserva;
-        this.fechaReserva = fechaReserva;
-        this.huesped = huesped;
+        this.fecha = fecha;
+        this.cliente = cliente;
         this.habitacion = habitacion;
         this.estado = "Pendiente";
     }
@@ -27,17 +32,17 @@ public class Reserva {
         this.estado = "Confirmada";
     }
 
-    // --- Getters y Setters ---
+    // --- Getters y Setters estandarizados ---
     public int getIdReserva() {
         return idReserva;
     }
 
-    public LocalDate getFechaReserva() {
-        return fechaReserva;
+    public LocalDate getFecha() {
+        return fecha;
     }
 
-    public Cliente getHuesped() {
-        return huesped;
+    public Cliente getCliente() {
+        return cliente;
     }
 
     public Habitacion getHabitacion() {
