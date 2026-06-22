@@ -24,6 +24,7 @@ El sistema está construido bajo una Arquitectura por Capas, separando estrictam
 
 ## Estructura de Directorios
 
+```text
 /
 ├── docs/                             
 │   └── (Diagramas UML y BPMN)
