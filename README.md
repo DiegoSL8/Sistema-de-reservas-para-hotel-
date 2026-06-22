@@ -22,35 +22,6 @@ El sistema está construido bajo una Arquitectura por Capas, separando estrictam
    - **Implementación:** Interfaces `IObservador`, `ISujetoObservable` y la entidad `Cliente`.
    - **Justificación:** Permite una arquitectura orientada a eventos. Desacopla la lógica de reservas del sistema de notificaciones. Cuando ocurre un cambio de estado crítico (confirmación, rechazo o anulación), el sistema central notifica automáticamente a las entidades suscritas correspondientes.
 
-## Estructura de Directorios
-
-```text
-/
-├── docs/                             
-│   └── (Diagramas UML y BPMN)
-│   └── (Informe y Requerimientos)
-├── src/
-│   ├── Main.java                     
-│   │
-│   ├── modelo/                       
-│   │   ├── Cliente.java              
-│   │   ├── Habitacion.java           
-│   │   └── Reserva.java              
-│   │
-│   └── patrones/
-│       ├── facade/                   
-│       │   ├── ReservaFacade.java    
-│       │   └── subsistemas/          
-│       │       ├── ControladorEstado.java   
-│       │       ├── RegistroHuesped.java     
-│       │       └── ValidadorInventario.java 
-│       │
-│       ├── observer/                 
-│       │   ├── IObservador.java       
-│       │   └── ISujetoObservable.java 
-│       │
-│       └── singleton/                
-│           └── GestorReservas.java
 
 Escenarios de Prueba Automatizados
 La ejecución del sistema no requiere ingreso de datos por teclado. 
@@ -85,3 +56,33 @@ Daniel Ledesma: Desarrollo del núcleo de datos, entidades base y patrón Single
 Sebastian Cofre: Desarrollo de la lógica de negocio, reglas de validación y patrón Facade.
 
 Diego Sereño: Definición de arquitectura base, patrón Observer, script automatizado e integración general.
+
+## Estructura de Directorios
+
+```text
+/
+├── docs/                             
+│   └── (Diagramas UML y BPMN)
+│   └── (Informe y Requerimientos)
+├── src/
+│   ├── Main.java                     
+│   │
+│   ├── modelo/                       
+│   │   ├── Cliente.java              
+│   │   ├── Habitacion.java           
+│   │   └── Reserva.java              
+│   │
+│   └── patrones/
+│       ├── facade/                   
+│       │   ├── ReservaFacade.java    
+│       │   └── subsistemas/          
+│       │       ├── ControladorEstado.java   
+│       │       ├── RegistroHuesped.java     
+│       │       └── ValidadorInventario.java 
+│       │
+│       ├── observer/                 
+│       │   ├── IObservador.java       
+│       │   └── ISujetoObservable.java 
+│       │
+│       └── singleton/                
+│           └── GestorReservas.java
